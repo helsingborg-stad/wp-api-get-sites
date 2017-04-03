@@ -1,0 +1,13 @@
+{
+    "name": "helsingborg-stad/wp-api-get-sites",
+    "description": "Get sites through WordPress REST API",
+    "type": "wordpress-plugin",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Kristoffer Svanmark",
+            "email": "kristoffer.svanmark@knowit.se"
+        }
+    ],
+    "require": {}
+}
