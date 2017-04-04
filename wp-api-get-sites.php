@@ -2,7 +2,7 @@
 
 /**
  * Plugin Name:       WP API Get Sites
- * Plugin URI:        
+ * Plugin URI:
  * Description:       Adds an endpoint to the WP API for get_sites functionallity
  * Version:           1.0.0
  * Author:            Kristoffer Svanmark
@@ -13,25 +13,39 @@
  * Domain Path:       /languages
  */
 
- // Protect agains direct file access
-if (! defined('WPINC')) {
-    die;
+namespace WpApiGetSites;
+
+class App
+{
+    public function __construct()
+    {
+        if (!is_multisite()) {
+            return;
+        }
+
+        add_action('rest_api_init', array($this, 'register'));
+    }
+
+    public function register()
+    {
+        register_rest_route('wp/v2', '/sites', array(
+            'methods' => 'GET',
+            'callback' => array($this, 'getSites')
+        ));
+    }
+
+    public function getSites()
+    {
+        $sites = get_sites();
+
+        foreach ($sites as &$site) {
+            $site->url = get_home_url($site->blog_id);
+            $site->rest_api = get_rest_url($site->blog_id);
+        }
+
+        return $sites;
+    }
 }
 
-define('WPAPIGETSITES_PATH', plugin_dir_path(__FILE__));
-define('WPAPIGETSITES_URL', plugins_url('', __FILE__));
-define('WPAPIGETSITES_TEMPLATE_PATH', WPAPIGETSITES_PATH . 'templates/');
-
-load_plugin_textdomain('wp-api-get-sites', false, plugin_basename(dirname(__FILE__)) . '/languages');
-
-require_once WPAPIGETSITES_PATH . 'source/php/Vendor/Psr4ClassLoader.php';
-require_once WPAPIGETSITES_PATH . 'Public.php';
-
-// Instantiate and register the autoloader
-$loader = new WpApiGetSites\Vendor\Psr4ClassLoader();
-$loader->addPrefix('WpApiGetSites', WPAPIGETSITES_PATH);
-$loader->addPrefix('WpApiGetSites', WPAPIGETSITES_PATH . 'source/php/');
-$loader->register();
-
 // Start application
-new WpApiGetSites\App();
+new \WpApiGetSites\App();
