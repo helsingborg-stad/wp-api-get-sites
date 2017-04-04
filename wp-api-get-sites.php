@@ -19,10 +19,6 @@ class App
 {
     public function __construct()
     {
-        if (!is_multisite()) {
-            return;
-        }
-
         add_action('rest_api_init', array($this, 'register'));
     }
 
@@ -36,6 +32,10 @@ class App
 
     public function getSites()
     {
+        if (!is_multisite()) {
+            return wp_send_json_error('This site is not in a multisite network.');
+        }
+
         $sites = get_sites();
 
         foreach ($sites as &$site) {
