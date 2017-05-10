@@ -37,7 +37,7 @@ class App
         }
 
         $sites = get_sites(array(
-            'number' => -1
+            'number' => 999
         ));
 
         foreach ($sites as &$site) {
