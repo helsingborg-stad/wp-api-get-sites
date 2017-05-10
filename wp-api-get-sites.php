@@ -36,7 +36,9 @@ class App
             return wp_send_json_error('This site is not in a multisite network.');
         }
 
-        $sites = get_sites();
+        $sites = get_sites(array(
+            'number' => -1
+        ));
 
         foreach ($sites as &$site) {
             $site->url = get_home_url($site->blog_id);
